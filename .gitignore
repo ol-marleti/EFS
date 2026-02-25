@@ -15,6 +15,7 @@ gurobi.log
 *.orig
 .idea
 
+/data
 /bak
 /resources
 /resources*
