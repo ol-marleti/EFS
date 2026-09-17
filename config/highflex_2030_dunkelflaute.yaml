@@ -109,7 +109,7 @@ ember_settings:
   ntc_cross_country_pf_restriction: false
   ramping: false
   nuclear_decommissioning: false
-  ember_gas_price: true
+  ember_gas_price: false
   hourly_carbon_prices: false
   chp_countries:
     Poland: PL
