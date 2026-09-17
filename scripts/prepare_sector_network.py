@@ -50,7 +50,6 @@ from scripts.prepare_network import maybe_adjust_costs_and_potentials
 from scripts.ember_customization import (
     apply_custom_ramping,
     apply_2023_nuclear_decommissioning,
-    apply_hourly_fuel_prices,
     apply_hourly_price_fix,
     include_chps_for_selected_countries,
     set_line_s_nom_to_ntc,
@@ -6673,12 +6672,6 @@ if __name__ == "__main__":
 
     if options["allam_cycle_gas"]:
         add_allam_gas(n, costs, pop_layout=pop_layout, spatial=spatial)
-        
-    if snakemake.config.get("ember_settings", {}).get("ember_gas_price", False):
-        apply_hourly_fuel_prices(
-            n, carriers=["gas", "coal", "lignite"], fn_hourly_prices=snakemake.input.hourly_fuel_costs
-        )
-        logger.info("Applied hourly prices for gas, coal and lignite.")
 
     n = set_temporal_aggregation(
         n, snakemake.params.time_resolution, snakemake.input.snapshot_weightings

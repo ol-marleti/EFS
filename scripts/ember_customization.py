@@ -68,35 +68,6 @@ def apply_2023_nuclear_decommissioning(n, year=2023):
         seen_plants.append(nearest_gen)
 
 
-def apply_hourly_fuel_prices(n, carriers, fn_hourly_prices):
-    df = pd.read_csv(fn_hourly_prices)
-    df['timestamp'] = pd.to_datetime(df['timestamp'])
-    df.set_index('timestamp', inplace=True)
-       
-    if not df.index.equals(n.snapshots):
-        logger.warning("Snapshot indices do not match exactly. Overwriting prices index with network snapshots.")
-        df.index = n.snapshots
-    
-    if 'marginal_cost' not in n.generators_t:
-        n.generators_t['marginal_cost'] = pd.DataFrame(index=n.snapshots, columns=[])
-    
-    for carrier in carriers:
-        idx = n.generators.index[n.generators.carrier == carrier]
-        if len(idx) == 0:
-            continue
-        if carrier == 'gas':
-            price_col = 'GAS_SPOT_PRICE_EUR_PER_MWH'
-        elif carrier == 'coal':
-            price_col = 'COAL_SPOT_PRICE_EUR_PER_MWH'
-        else:
-            price_col = 'LIGNITE_SPOT_PRICE_EUR_PER_MWH'
-        prices = df[price_col]
-        
-        mc_t_array = prices.to_numpy()[:, np.newaxis]
-        mc_t_df = pd.DataFrame(mc_t_array, index=prices.index, columns=idx)
-        n.generators_t['marginal_cost'][idx] = mc_t_df
-
-
 def apply_custom_pf_constraint(n,
                                link_name="AL -> GR NTC 2025",
                                E_min=153 * 0.95, # MWh; use 153e3 if you meant 153 GWh
