@@ -50,7 +50,6 @@ from scripts.prepare_network import maybe_adjust_costs_and_potentials
 from scripts.ember_customization import (
     apply_custom_ramping,
     apply_2023_nuclear_decommissioning,
-    apply_hourly_price_fix,
     include_chps_for_selected_countries,
     set_line_s_nom_to_ntc,
     add_LV_capacities,
@@ -6784,11 +6783,6 @@ if __name__ == "__main__":
         for carrier in n.carriers.index.intersection(costs.index):
             n.carriers.loc[carrier, "co2_emissions"] = costs.loc[carrier, "CO2 intensity"]
 
-        if snakemake.config.get("ember_settings", {}).get("hourly_carbon_prices", False):
-            hourly_emission_prices_fn = snakemake.input.hourly_co2_prices
-        else:
-            hourly_emission_prices_fn = None
-
     # Project specific changes
     ember_settings = snakemake.config.get('ember_settings', {})
     if ember_settings.get('chp_data', None) is not None:
@@ -6810,10 +6804,6 @@ if __name__ == "__main__":
     if snakemake.config.get("ember_settings", {}).get("historical_ntc", False):
        set_line_s_nom_to_ntc(n, snakemake.input.ember_ntc_csv)
        logger.info("Restrict s_nom to NTC values")
-
-    if snakemake.config.get("ember_settings", {}).get("ember_gas_price", False):
-        apply_hourly_price_fix(n)
-
     
     scenario_capacities_high = ember_settings.get("apply_highflex_capacities", False)
     if scenario_capacities_high:

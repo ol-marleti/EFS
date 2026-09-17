@@ -321,15 +321,6 @@ def set_line_s_nom_to_ntc(n, ntc_fn):
             logger.info(f"Removed lines {removed_lines}, because there was already a valid link connection {links_between.index}.")
 
 
-def apply_hourly_price_fix(n):
-    for store in ["EU gas Store", "EU coal Store", "EU lignite Store"]:
-        if store in n.stores.index:
-            n.remove("Store", store)
-            logger.info(
-                f"Removing {store} to account for hourly prices for {store.split(" ")[1]}."
-            )
-
-
 def add_LV_capacities(n, ppl, max_hours):
     # For rooftop solar
     rooftop_df = ppl[(ppl['carrier'].str.strip().str.lower() == 'solar btm')]
